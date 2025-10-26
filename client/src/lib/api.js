@@ -5,7 +5,7 @@ import axios from 'axios';
 // --- IMPORTANT: Update this URL for deployment! ---
 // If running locally with Node/Express on 5000, this is fine.
 // When deploying, change this to your live backend URL (e.g., Render domain).
-const API_BASE_URL = 'http://localhost:5000/api'; 
+const API_BASE_URL = 'https://skillshare-backend-g5b7.onrender.com/api'; 
 // const API_BASE_URL = 'https://skillshare-backend.render.com/api'; 
 // ---------------------------------------------------
 
