@@ -69,8 +69,8 @@ Follow these steps to get the SkillShare application running locally.
 ### Step 1: Clone the Repository
 
 ```bash
-git clone [Your Repository URL Here]
-cd [Your Repository Name]
+git clone https://github.com/Tanim-10/IIT-Hackathon
+cd IIT-Hackathon
 ```
 
 ### Step 2: Backend Setup (`/server` folder)
