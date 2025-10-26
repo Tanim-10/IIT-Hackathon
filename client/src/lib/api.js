@@ -2,12 +2,19 @@
 
 import axios from 'axios';
 
+// --- IMPORTANT: Update this URL for deployment! ---
+// If running locally with Node/Express on 5000, this is fine.
+// When deploying, change this to your live backend URL (e.g., Render domain).
+const API_BASE_URL = 'http://localhost:5000/api'; 
+// const API_BASE_URL = 'https://skillshare-backend.render.com/api'; 
+// ---------------------------------------------------
+
 // 1. Create a new Axios instance
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api', // Your backend URL
+  baseURL: API_BASE_URL,
 });
 
-// 2. Add a request interceptor
+// 2. Add a request interceptor (Attaches JWT Token)
 api.interceptors.request.use(
   (config) => {
     // Get the token from localStorage
@@ -37,14 +44,13 @@ export const userAPI = {
   getUser: (id) => api.get(`/users/${id}`),
   updateMe: (updatedData) => api.put('/users/me', updatedData),
   searchUsers: (params) => api.get('/users/search', { params }),
+  // Export the raw API instance for external use (like in PrivateChat to fetch history)
+  api: api, 
 };
 
-// --- MODIFIED PROJECT API ---
 export const projectAPI = {
-  getProjects: () => api.get('/projects'), // Get all open projects
-  // --- ADDED FUNCTION ---
+  getProjects: () => api.get('/projects'), 
   getProjectsForUser: () => api.get('/projects/me'), 
-  // ----------------------
   createProject: (projectData) => api.post('/projects', projectData),
   joinProject: (id) => api.post(`/projects/${id}/join`),
 };
