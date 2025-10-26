@@ -2,18 +2,19 @@
 
 const express = require('express');
 const router = express.Router();
+// IMPORTANT: Ensure the controller is imported correctly
 const projectController = require('../controllers/projectController');
 const { protect } = require('../middleware/auth');
 
-// @route   GET /api/projects/me 
-// @desc    Get all projects created or joined by the logged-in user
-// @access  Private
-router.get('/me', protect, projectController.getProjectsForUser); // <--- NEW ROUTE
-
 // @route   GET /api/projects
-// @desc    Get all open projects (Marketplace view)
+// @desc    Get all open projects (This is the route failing with 404)
 // @access  Public
 router.get('/', projectController.getProjects);
+
+// @route   GET /api/projects/me
+// @desc    Get all projects created or joined by the logged-in user
+// @access  Private
+router.get('/me', protect, projectController.getProjectsForUser); 
 
 // @route   POST /api/projects
 // @desc    Create a new community project

@@ -129,7 +129,7 @@ const CreateProjectForm = ({ skills, onProjectCreated }) => {
 };
 
 
-// --- Reusable Project Card component (Unchanged) ---
+// --- Reusable Project Card component (Modified) ---
 function ProjectCard({ project, onJoinProject, currentUserId }) {
     const isFull = project.volunteers.length >= project.volunteersNeeded;
     const isJoined = project.volunteers.map(v => v._id).includes(currentUserId);
@@ -169,8 +169,11 @@ function ProjectCard({ project, onJoinProject, currentUserId }) {
             <CardContent className="flex-grow">
                 <h4 className="font-semibold mb-2 text-sm">Skills Needed:</h4>
                 <div className="flex flex-wrap gap-2 mb-4">
+                    {/* FIX: Add safety check for skill object and name property */}
                     {project.skillsNeeded.map(skill => (
-                        <Badge key={skill._id} variant="secondary">{skill.name}</Badge>
+                        <Badge key={skill._id || skill.name} variant="secondary">
+                            {skill ? skill.name : 'Unknown Skill'} 
+                        </Badge>
                     ))}
                 </div>
                 
@@ -205,7 +208,7 @@ function ProjectCard({ project, onJoinProject, currentUserId }) {
 export default function Projects() {
     const { user } = useAuthContext();
     const [openProjects, setOpenProjects] = useState([]);
-    const [userProjects, setUserProjects] = useState([]); // NEW: State for user's projects
+    const [userProjects, setUserProjects] = useState([]); 
     const [allSkillTags, setAllSkillTags] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('browse');
@@ -215,15 +218,14 @@ export default function Projects() {
         setIsDataLoading(true);
         try {
             const [projectsResponse, skillsResponse] = await Promise.all([
-                projectAPI.getProjects(), // Open projects for browse tab
+                projectAPI.getProjects(), 
                 skillAPI.getAllSkillTags(),
             ]);
             setOpenProjects(projectsResponse.data);
             setAllSkillTags(skillsResponse.data);
 
-            // Fetch user-specific projects only if logged in
             if (user) {
-                const userProjectsResponse = await projectAPI.getProjectsForUser(); // NEW API CALL
+                const userProjectsResponse = await projectAPI.getProjectsForUser(); 
                 setUserProjects(userProjectsResponse.data);
             }
         } catch (error) {
@@ -238,8 +240,8 @@ export default function Projects() {
     }, [user]);
 
     const handleProjectCreated = () => {
-        fetchAllData(); // Refresh list after creation
-        setActiveTab('browse'); // Switch to browse tab
+        fetchAllData(); 
+        setActiveTab('browse'); 
     };
 
     const handleJoinProject = async (projectId) => {
@@ -250,7 +252,7 @@ export default function Projects() {
             
             await projectAPI.joinProject(projectId);
             alert('You have successfully joined the project!');
-            fetchAllData(); // Refresh data
+            fetchAllData(); 
         } catch (error) {
             const msg = error.response?.data?.message || 'Failed to join project.';
             alert(msg);

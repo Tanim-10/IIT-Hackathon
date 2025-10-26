@@ -13,18 +13,17 @@ dotenv.config();
 
 const app = express();
 
-// --- Configuration for Allowed Frontend Domains ---
+// Configuration for Allowed Frontend Domains
 const FRONTEND_URLS = [
-    "http://localhost:3000",     // Default React port
-    "http://localhost:5173",    // Default Vite port
-    "https://skillshare-frontend.vercel.app", // Your live deployment domain
-    "https://skillshare-backend.render.com" // If deploying backend on Render and accessing directly
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "https://skillshare.vercel.app", 
+    // Add your deployment URLs here
 ];
 
 
 // Middleware (CORS for standard Express API routes)
 app.use(cors({
-    // Allow all defined frontend origins for standard REST API requests
     origin: FRONTEND_URLS,
     credentials: true,
 }));
@@ -41,7 +40,9 @@ app.use('/api/users', require('./routes/users'));
 app.use('/api/skills', require('./routes/skills'));
 app.use('/api/sessions', require('./routes/sessions')); 
 app.use('/api/services', require('./routes/services')); 
-app.use('/api/messages', require('./routes/messages')); 
+app.use('/api/messages', require('./routes/messages'));
+// --- CRITICAL LINE: Project Routes ---
+app.use('/api/projects', require('./routes/projects')); 
 
 
 // Error handling middleware
@@ -52,13 +53,11 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 
-// --- SOCKET.IO INTEGRATION (CLEANED UP) ---
+// SOCKET.IO INTEGRATION
 const server = http.createServer(app); 
 
-// The single, correct Socket.io initialization
 const io = new Server(server, {
     cors: {
-        // Use the combined list of origins for WebSockets
         origin: FRONTEND_URLS, 
         methods: ["GET", "POST"]
     }

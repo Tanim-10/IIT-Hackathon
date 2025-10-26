@@ -7,7 +7,7 @@ const Skill = require('../models/Skill');
 // @desc    Get all open projects
 // @route   GET /api/projects
 // @access  Public
-exports.getProjects = async (req, res) => {
+exports.getProjects = async (req, res) => { // <-- EXPORTED
   try {
     const projects = await Project.find({ status: 'Open' })
       .populate('creator', 'name location avatar')
@@ -25,7 +25,7 @@ exports.getProjects = async (req, res) => {
 // @desc    Get all projects created or joined by the logged-in user
 // @route   GET /api/projects/me
 // @access  Private
-exports.getProjectsForUser = async (req, res) => { // <--- NEW FUNCTION
+exports.getProjectsForUser = async (req, res) => { // <-- EXPORTED
   try {
     const userId = req.user._id;
 
@@ -50,11 +50,10 @@ exports.getProjectsForUser = async (req, res) => { // <--- NEW FUNCTION
 // @desc    Create a new community project
 // @route   POST /api/projects
 // @access  Private
-exports.createProject = async (req, res) => {
+exports.createProject = async (req, res) => { // <-- EXPORTED
   const { title, description, skills, volunteersNeeded, location } = req.body;
 
   try {
-    // 1. Convert skill names (strings) to skill IDs
     const skillDocs = await Skill.find({ name: { $in: skills } });
     const skillIds = skillDocs.map(doc => doc._id);
 
@@ -62,7 +61,6 @@ exports.createProject = async (req, res) => {
       return res.status(400).json({ message: 'One or more specified skills were not found.' });
     }
 
-    // 2. Create the project
     const project = await Project.create({
       title,
       description,
@@ -70,7 +68,7 @@ exports.createProject = async (req, res) => {
       volunteersNeeded: parseInt(volunteersNeeded),
       location,
       creator: req.user._id,
-      volunteers: [], // Starts empty
+      volunteers: [],
     });
 
     res.status(201).json(project);
@@ -83,7 +81,7 @@ exports.createProject = async (req, res) => {
 // @desc    User joins a project
 // @route   POST /api/projects/:id/join
 // @access  Private
-exports.joinProject = async (req, res) => {
+exports.joinProject = async (req, res) => { // <-- EXPORTED
   try {
     const projectId = req.params.id;
     const userId = req.user._id;
@@ -106,7 +104,6 @@ exports.joinProject = async (req, res) => {
       return res.status(400).json({ message: 'The project is full.' });
     }
 
-    // Add user to volunteers list
     project.volunteers.push(userId);
     await project.save();
 
