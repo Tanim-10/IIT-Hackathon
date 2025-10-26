@@ -149,7 +149,7 @@ Video: https://drive.google.com/file/d/1DVrVwEtggKhAEJCGj_S2yb4FEOmwKvRA/view?us
 |----------|------|
 | **Live Deployment** | https://skillshare-frontend.vercel.app |
 | **Project Repository** | https://github.com/Tanim-10/IIT-Hackathon |
-| **Project Report / Documentation** |  |
+| **Project Report / Documentation** | https://drive.google.com/file/d/1JbPRiyOrcOACgO6bnZ8J31SU4bL_N2fT/view?usp=sharing |
 
 ---
 
