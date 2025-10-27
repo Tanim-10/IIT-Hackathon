@@ -13,33 +13,34 @@ dotenv.config();
 const app = express();
 
 // Configuration for Allowed Frontend Domains
-const FRONTEND_URLS = process.env.NODE_ENV === 'production' 
-    ? [
-        "https://skillshare-frontend.vercel.app", // Your production frontend URL
-        // Add any other production URLs here
-      ]
-    : [
-        "http://localhost:3000",
-        "http://localhost:5173",
-        "https://skillshare-frontend.vercel.app", // Also allow in development for testing
-      ];
+const FRONTEND_URLS = [
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "https://skillshare-frontend.vercel.app",
+];
 
-// Middleware (CORS for standard Express API routes)
+// ✅ CRITICAL: CORS must be the FIRST middleware
 app.use(cors({
-    origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl requests)
+    origin: function(origin, callback) {
+        // Allow requests with no origin (mobile apps, Postman, etc.)
         if (!origin) return callback(null, true);
         
-        if (FRONTEND_URLS.indexOf(origin) === -1) {
-            const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-            return callback(new Error(msg), false);
+        if (FRONTEND_URLS.includes(origin)) {
+            callback(null, true);
+        } else {
+            console.log('CORS blocked origin:', origin);
+            callback(new Error('Not allowed by CORS'));
         }
-        return callback(null, true);
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    exposedHeaders: ['Content-Range', 'X-Content-Range'],
+    maxAge: 600
 }));
+
+// Handle preflight requests
+app.options('*', cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

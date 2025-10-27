@@ -3,15 +3,16 @@
 import axios from 'axios';
 
 // --- IMPORTANT: Update this URL for deployment! ---
-// If running locally with Node/Express on 5000, this is fine.
-// When deploying, change this to your live backend URL (e.g., Render domain).
 const API_BASE_URL = 'https://skillshare-backend-g5b7.onrender.com/api'; 
-// const API_BASE_URL = 'https://skillshare-backend.render.com/api'; 
 // ---------------------------------------------------
 
-// 1. Create a new Axios instance
+// 1. Create a new Axios instance with CORS credentials
 const api = axios.create({
   baseURL: API_BASE_URL,
+  withCredentials: true, // ✅ This enables CORS with credentials
+  headers: {
+    'Content-Type': 'application/json',
+  }
 });
 
 // 2. Add a request interceptor (Attaches JWT Token)
@@ -32,7 +33,20 @@ api.interceptors.request.use(
   }
 );
 
-// 3. API definitions
+// 3. Optional: Add response interceptor for better error handling
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Token expired or invalid - redirect to login
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
+// 4. API definitions
 
 export const authAPI = {
   register: (userData) => api.post('/auth/register', userData),
